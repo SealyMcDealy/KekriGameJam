@@ -9,9 +9,10 @@ public class SealMovement : MonoBehaviour
     [SerializeField] private float jumpHeight;
     [SerializeField] private bool IsGrounded;
     [SerializeField] private float extinguisherKnockback;
-    
-    
-    
+    [SerializeField] private float sensitivity;
+
+
+    private AudioSource fireExtinguisherSound;
     private ParticleSystem fireExtinguisherParticles;
     private Camera PlayerCam;
     private Rigidbody rb;
@@ -22,27 +23,35 @@ public class SealMovement : MonoBehaviour
     {
         PlayerCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         rb = GetComponent<Rigidbody>();
+
         fireExtinguisherParticles = GetComponentInChildren<ParticleSystem>();
         fireExtinguisherParticles.Stop();
+
+        fireExtinguisherSound = GetComponentInChildren<AudioSource>();
+        fireExtinguisherSound.Stop();
     }
 
     private void Update()
     {
         hor = Input.GetAxis("Horizontal");
         ver = Input.GetAxis("Vertical");
+
+        CameraMover();
+
+        Debug.Log("noise playing " + fireExtinguisherSound.isPlaying);
         if (Input.GetKey(KeyCode.Space) && IsGrounded == true)
         {
             Jumper();
         }
-       
-        
         if (Input.GetKey(KeyCode.E))
         {
             fireExtinguisherParticles.Play();
+            fireExtinguisherSound.Play();
             Blower();
         }
         else
         {
+            fireExtinguisherSound.Stop();
             fireExtinguisherParticles.Stop();
         }
     }
@@ -70,6 +79,14 @@ public class SealMovement : MonoBehaviour
         desiredMoveDirection = Vector3.ClampMagnitude(desiredMoveDirection, 1);
         rb.velocity = new Vector3(desiredMoveDirection.x * speed * Time.deltaTime, rb.velocity.y, desiredMoveDirection.z * speed * Time.deltaTime);
 
+    }
+
+    void CameraMover()
+    {
+        float rotateHorizontal = Input.GetAxis("Mouse X");
+        float rotateVertical = Input.GetAxis("Mouse Y");
+        transform.RotateAround(transform.position, -Vector3.up, rotateHorizontal * sensitivity); //use transform.Rotate(-transform.up * rotateHorizontal * sensitivity) instead if you dont want the camera to rotate around the player
+        transform.RotateAround(Vector3.zero, transform.right, rotateVertical * sensitivity); // again, use transform.Rotate(transform.right * rotateVertical * sensitivity) if you don't want the camera to rotate around the player
     }
 
     void Jumper()
