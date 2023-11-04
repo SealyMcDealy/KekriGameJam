@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Fire : MonoBehaviour
 {
+    private ParticleSystem fireParticles;
     void Start()
     {
         
@@ -12,5 +13,10 @@ public class Fire : MonoBehaviour
     void Update()
     {
         
+    }
+
+    private void OnParticleCollision(GameObject other)
+    {
+        fireParticles.maxParticles -= 20;
     }
 }

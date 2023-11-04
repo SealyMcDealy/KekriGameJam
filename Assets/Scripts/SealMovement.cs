@@ -46,12 +46,21 @@ public class SealMovement : MonoBehaviour
         if (Input.GetKey(KeyCode.E))
         {
             fireExtinguisherParticles.Play();
-            fireExtinguisherSound.Play();
+
+            if (fireExtinguisherSound.isPlaying == false)
+            {
+                fireExtinguisherSound.Play();
+            }
+
             Blower();
         }
         else
         {
-            fireExtinguisherSound.Stop();
+            
+            if (fireExtinguisherSound.isPlaying == true)
+            {
+                fireExtinguisherSound.Stop();
+            }
             fireExtinguisherParticles.Stop();
         }
     }
