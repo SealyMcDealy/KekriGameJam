@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class Fire : MonoBehaviour
 {
+    private GameManager manager;   
     private ParticleSystem fireParticles;
     void Start()
     {
         fireParticles = GetComponent<ParticleSystem>();
+        manager = GameObject.FindObjectOfType<GameManager>();
     }
 
     void Update()
@@ -15,6 +17,7 @@ public class Fire : MonoBehaviour
         if (fireParticles.maxParticles <= 0)
         {
             Destroy(gameObject);
+            manager.fireCount++;
         }
     }
 

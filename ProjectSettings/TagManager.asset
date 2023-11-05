@@ -7,6 +7,7 @@ TagManager:
   - Ground
   - Fire
   - Particles
+  - Ragdoll
   layers:
   - Default
   - TransparentFX

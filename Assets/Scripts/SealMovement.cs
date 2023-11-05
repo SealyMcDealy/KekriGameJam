@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.ConstrainedExecution;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SealMovement : MonoBehaviour
@@ -92,8 +93,8 @@ public class SealMovement : MonoBehaviour
         //normalize movement values so that diagonal movement is not faster
         desiredMoveDirection = Vector3.ClampMagnitude(desiredMoveDirection, 1);
         rb.velocity = new Vector3(desiredMoveDirection.x * speed * Time.deltaTime, rb.velocity.y, desiredMoveDirection.z * speed * Time.deltaTime);
-        transform.rotation = Quaternion.LookRotation(forward);
-
+        transform.rotation = Quaternion.Euler(desiredMoveDirection);
+        
         //limit velocity if going over the limit
 
         if (rb.velocity.magnitude >= speedLimit)
@@ -148,6 +149,22 @@ public class SealMovement : MonoBehaviour
 
             Debug.Log("fire knockback");
             GameManager.IsHit = true;
+        }
+        if (other.gameObject.CompareTag("Ragdoll"))
+        {
+            var test = other.gameObject.GetComponent<RagdollLogic>();
+
+            test.physicsRagdoll.SetActive(true);
+
+            test.physicsRagdoll.transform.SetParent(null);
+
+            test.standingRagdoll.SetActive(false);
+
+            int some = Random.Range(0, test.voiceLines.Count);
+            test.source.clip = test.voiceLines[some];
+            test.source.Play();
+
+            Destroy(test.gameObject, test.source.clip.length);
         }
     }
 }

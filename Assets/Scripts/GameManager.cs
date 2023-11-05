@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +11,7 @@ public enum AnimationStatus
     Closed = 1,
     Damage = 2,
     Tired = 3
+
 }
 
 
@@ -24,14 +26,33 @@ public class GameManager : MonoBehaviour
 
     private bool IsBlinking;
 
+    public TextMeshProUGUI civillianText;
+    public TextMeshProUGUI fireText;
+
+    public int civillianCount;
+    public int fireCount;
+
+
+    public RagdollLogic[] Civillians;
+    public Fire[] Fire;
     void Start()
     {
         statusImage = GameObject.Find("StatusImage").GetComponent<Image>();
+
+        Civillians = GameObject.FindObjectsOfType<RagdollLogic>();
+        Fire = GameObject.FindObjectsOfType<Fire>();
+    }
+
+    void TextUpdater()
+    {
+        civillianText.text = "Civillians rescued " + civillianCount + " out of " + Civillians.Length;
+        fireText.text = "Fires put out " + fireCount + " out of " + Fire.Length;
     }
 
     void Update()
     {
-        timer -= Time.deltaTime; 
+        TextUpdater();
+        timer -= Time.deltaTime;
         if (IsHit == true)
         {
             StopAllCoroutines();
