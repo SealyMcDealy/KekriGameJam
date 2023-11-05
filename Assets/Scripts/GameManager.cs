@@ -32,12 +32,15 @@ public class GameManager : MonoBehaviour
     public int civillianCount;
     public int fireCount;
 
+    public AudioSource audioSource;
 
     public RagdollLogic[] Civillians;
     public Fire[] Fire;
     void Start()
     {
         statusImage = GameObject.Find("StatusImage").GetComponent<Image>();
+
+        audioSource = GetComponent<AudioSource>();
 
         Civillians = GameObject.FindObjectsOfType<RagdollLogic>();
         Fire = GameObject.FindObjectsOfType<Fire>();
@@ -65,6 +68,11 @@ public class GameManager : MonoBehaviour
             IsBlinking = true;
             StartCoroutine(Blinking());
 
+        }
+
+        if (civillianCount == Civillians.Length && fireCount == Fire.Length)
+        {
+            audioSource.Play();
         }
     }
     IEnumerator Blinking()
