@@ -10,6 +10,8 @@ public class SealMovement : MonoBehaviour
     [SerializeField] private bool IsGrounded;
     [SerializeField] private float extinguisherKnockback;
     [SerializeField] private float sensitivity;
+    [SerializeField] private float fireKnockback;
+    [SerializeField] private float speedLimit;
 
 
     private AudioSource fireExtinguisherSound;
@@ -18,6 +20,9 @@ public class SealMovement : MonoBehaviour
     private Rigidbody rb;
     private float ver;
     private float hor;
+
+
+
 
     void Start()
     {
@@ -29,6 +34,7 @@ public class SealMovement : MonoBehaviour
 
         fireExtinguisherSound = GetComponentInChildren<AudioSource>();
         fireExtinguisherSound.Stop();
+
     }
 
     private void Update()
@@ -38,7 +44,7 @@ public class SealMovement : MonoBehaviour
 
         CameraMover();
 
-        Debug.Log("noise playing " + fireExtinguisherSound.isPlaying);
+
         if (Input.GetKey(KeyCode.Space) && IsGrounded == true)
         {
             Jumper();
@@ -56,11 +62,11 @@ public class SealMovement : MonoBehaviour
         }
         else
         {
-            
             if (fireExtinguisherSound.isPlaying == true)
             {
                 fireExtinguisherSound.Stop();
             }
+
             fireExtinguisherParticles.Stop();
         }
     }
@@ -69,7 +75,6 @@ public class SealMovement : MonoBehaviour
     {
         Mover();
     }
-
     void Mover()
     {
         //get cam values
@@ -87,6 +92,14 @@ public class SealMovement : MonoBehaviour
         //normalize movement values so that diagonal movement is not faster
         desiredMoveDirection = Vector3.ClampMagnitude(desiredMoveDirection, 1);
         rb.velocity = new Vector3(desiredMoveDirection.x * speed * Time.deltaTime, rb.velocity.y, desiredMoveDirection.z * speed * Time.deltaTime);
+        transform.rotation = Quaternion.LookRotation(forward);
+
+        //limit velocity if going over the limit
+
+        if (rb.velocity.magnitude >= speedLimit)
+        {
+            rb.AddForce(transform.position * -(rb.velocity.magnitude - speedLimit));
+        }
 
     }
 
@@ -94,8 +107,8 @@ public class SealMovement : MonoBehaviour
     {
         float rotateHorizontal = Input.GetAxis("Mouse X");
         float rotateVertical = Input.GetAxis("Mouse Y");
-        transform.RotateAround(transform.position, -Vector3.up, rotateHorizontal * sensitivity); //use transform.Rotate(-transform.up * rotateHorizontal * sensitivity) instead if you dont want the camera to rotate around the player
-        transform.RotateAround(Vector3.zero, transform.right, rotateVertical * sensitivity); // again, use transform.Rotate(transform.right * rotateVertical * sensitivity) if you don't want the camera to rotate around the player
+        PlayerCam.transform.RotateAround(transform.position, -Vector3.up, rotateHorizontal * sensitivity); //use transform.Rotate(-transform.up * rotateHorizontal * sensitivity) instead if you dont want the camera to rotate around the player
+        PlayerCam.transform.RotateAround(Vector3.zero, transform.right, rotateVertical * sensitivity); // again, use transform.Rotate(transform.right * rotateVertical * sensitivity) if you don't want the camera to rotate around the player
     }
 
     void Jumper()
@@ -113,6 +126,28 @@ public class SealMovement : MonoBehaviour
         if (collision.collider.CompareTag("Ground"))
         {
             IsGrounded = true;
+        }
+        if (collision.gameObject.CompareTag("Fire"))
+        {
+            Vector3 direction = transform.position - collision.transform.position;
+
+            rb.AddForce((direction * fireKnockback) + new Vector3(0, jumpHeight * 0.5f, 0));
+
+            Debug.Log("fire knockback");
+            GameManager.IsHit = true;
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Fire"))
+        {
+            Vector3 direction = transform.position - other.transform.position;
+
+            rb.AddForce((direction * fireKnockback) + new Vector3(0, jumpHeight * 0.5f, 0));
+
+            Debug.Log("fire knockback");
+            GameManager.IsHit = true;
         }
     }
 }
