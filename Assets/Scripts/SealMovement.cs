@@ -7,6 +7,7 @@ using UnityEngine;
 public class SealMovement : MonoBehaviour
 {
     [SerializeField] private float speed;
+    [SerializeField] private float rotationSpeed;
     [SerializeField] private float jumpHeight;
     [SerializeField] private bool IsGrounded;
     [SerializeField] private float extinguisherKnockback;
@@ -23,6 +24,8 @@ public class SealMovement : MonoBehaviour
     private float hor;
 
 
+    //public List<AudioClip> clipList;
+    //private AudioSource audioSource;
 
 
     void Start()
@@ -36,6 +39,7 @@ public class SealMovement : MonoBehaviour
         fireExtinguisherSound = GetComponentInChildren<AudioSource>();
         fireExtinguisherSound.Stop();
 
+        //audioSource = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -93,8 +97,13 @@ public class SealMovement : MonoBehaviour
         //normalize movement values so that diagonal movement is not faster
         desiredMoveDirection = Vector3.ClampMagnitude(desiredMoveDirection, 1);
         rb.velocity = new Vector3(desiredMoveDirection.x * speed * Time.deltaTime, rb.velocity.y, desiredMoveDirection.z * speed * Time.deltaTime);
-        transform.rotation = Quaternion.Euler(desiredMoveDirection);
         
+        Vector3 rot;
+        rot = forward * -Input.GetAxis("Horizontal") * rotationSpeed;
+        transform.Rotate(0, rot.y, 0);
+
+        // above: gets the rotation relative to the camera
+
         //limit velocity if going over the limit
 
         if (rb.velocity.magnitude >= speedLimit)
@@ -104,7 +113,7 @@ public class SealMovement : MonoBehaviour
 
     }
 
-    void CameraMover()
+    void CameraMover() //not in use yet
     {
         float rotateHorizontal = Input.GetAxis("Mouse X");
         float rotateVertical = Input.GetAxis("Mouse Y");
@@ -133,6 +142,15 @@ public class SealMovement : MonoBehaviour
             Vector3 direction = transform.position - collision.transform.position;
 
             rb.AddForce((direction * fireKnockback) + new Vector3(0, jumpHeight * 0.5f, 0));
+
+
+            //if (audioSource.isPlaying == false)
+            //{
+            //    int some = Random.Range(0, clipList.Count);
+            //    audioSource.clip = clipList[some];
+            //    audioSource.Play();
+            //}
+            
 
             Debug.Log("fire knockback");
             GameManager.IsHit = true;
