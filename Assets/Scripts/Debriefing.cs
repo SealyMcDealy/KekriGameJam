@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class Debriefing : MonoBehaviour
 {
-    public AudioSource audioSource;
+    private AudioSource audioSource;
 
 
     private void Start()

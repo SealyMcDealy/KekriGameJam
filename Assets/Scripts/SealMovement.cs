@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class SealMovement : MonoBehaviour
 {
-    [SerializeField] private float speed;
+    [SerializeField] private float speed;       //if you need to see something in the editor but not be accessible to other scripts, use [SerializeField]
     [SerializeField] private float rotationSpeed;
     [SerializeField] private float jumpHeight;
     [SerializeField] private bool IsGrounded;
@@ -28,7 +28,7 @@ public class SealMovement : MonoBehaviour
     //private AudioSource audioSource;
 
 
-    void Start()
+    void Start() //called once and only once. There is void Awake() which happens every time a script is loaded. Awake also happens before Start() 
     {
         PlayerCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         rb = GetComponent<Rigidbody>();
@@ -42,7 +42,7 @@ public class SealMovement : MonoBehaviour
         //audioSource = GetComponent<AudioSource>();
     }
 
-    private void Update()
+    private void Update()       //Update is called every frame. And every frame can be different depending on your fps
     {
         hor = Input.GetAxis("Horizontal");
         ver = Input.GetAxis("Vertical");
@@ -76,7 +76,7 @@ public class SealMovement : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+    void FixedUpdate() //Fixed update happens 50/s and is used for phycsics calculations in order to make them stable
     {
         Mover();
     }
@@ -102,18 +102,17 @@ public class SealMovement : MonoBehaviour
         rot = forward * -Input.GetAxis("Horizontal") * rotationSpeed;
         transform.Rotate(0, rot.y, 0);
 
-        // above: gets the rotation relative to the camera
+        // above: gets the rotation relative to the camera (in theory, thanks me)
 
-        //limit velocity if going over the limit
+        //limit velocity if going over the limit because fire knockback stacks
 
         if (rb.velocity.magnitude >= speedLimit)
         {
             rb.AddForce(transform.position * -(rb.velocity.magnitude - speedLimit));
         }
-
     }
 
-    void CameraMover() //not in use yet
+    void CameraMover() //not in use yet, can probably just use cinemachine or something 
     {
         float rotateHorizontal = Input.GetAxis("Mouse X");
         float rotateVertical = Input.GetAxis("Mouse Y");
@@ -141,16 +140,17 @@ public class SealMovement : MonoBehaviour
         {
             Vector3 direction = transform.position - collision.transform.position;
 
-            rb.AddForce((direction * fireKnockback) + new Vector3(0, jumpHeight * 0.5f, 0));
+            rb.AddForce((direction * fireKnockback) + new Vector3(0, jumpHeight * 0.5f, 0));//forgot to change direction to -direction
+                                                                                            //would have improved the knockback logic
 
 
-            //if (audioSource.isPlaying == false)
+            //if (audioSource.isPlaying == false)   //since this gameObject has an audioSource in one of its children, this will override that childs
             //{
             //    int some = Random.Range(0, clipList.Count);
             //    audioSource.clip = clipList[some];
             //    audioSource.Play();
             //}
-            
+
 
             Debug.Log("fire knockback");
             GameManager.IsHit = true;
@@ -163,7 +163,8 @@ public class SealMovement : MonoBehaviour
         {
             Vector3 direction = transform.position - other.transform.position;
 
-            rb.AddForce((direction * fireKnockback) + new Vector3(0, jumpHeight * 0.5f, 0));
+            rb.AddForce((direction * fireKnockback) + new Vector3(0, jumpHeight * 0.5f, 0)); //forgot to change direction to -direction
+                                                                                             //would have improved the knockback logic
 
             Debug.Log("fire knockback");
             GameManager.IsHit = true;
@@ -174,7 +175,7 @@ public class SealMovement : MonoBehaviour
 
             test.physicsRagdoll.SetActive(true);
 
-            test.physicsRagdoll.transform.SetParent(null);
+            test.physicsRagdoll.transform.SetParent(null); //deparent ragdoll. Honestly can be removed as it's working incorrectly but meh fuck it
 
             test.standingRagdoll.SetActive(false);
 

@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class UserInterface : MonoBehaviour
 {
+    //there is a proper proper way to do UI, I just heavily simplified what we need here 
     public GameObject buttons;
     public GameObject credits;
     public void Start()
@@ -13,11 +14,6 @@ public class UserInterface : MonoBehaviour
         buttons = GameObject.Find("ButtonsCanvas");
 
         credits.SetActive(false); 
-    }
-
-    public void Credits()
-    {
-
     }
     public void StartScene()
     {
