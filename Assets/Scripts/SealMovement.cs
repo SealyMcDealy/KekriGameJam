@@ -42,7 +42,7 @@ public class SealMovement : MonoBehaviour
         //audioSource = GetComponent<AudioSource>();
     }
 
-    private void Update()       //Update is called every frame. And every frame can be different depending on your fps
+    private void Update()       //Update is called every frame. And every frame can last differently depending on your fps
     {
         hor = Input.GetAxis("Horizontal");
         ver = Input.GetAxis("Vertical");
@@ -76,7 +76,7 @@ public class SealMovement : MonoBehaviour
         }
     }
 
-    void FixedUpdate() //Fixed update happens 50/s and is used for phycsics calculations in order to make them stable
+    void FixedUpdate() //Fixed update happens 50/s and is used for physics calculations in order to make them stable
     {
         Mover();
     }
@@ -144,7 +144,7 @@ public class SealMovement : MonoBehaviour
                                                                                             //would have improved the knockback logic
 
 
-            //if (audioSource.isPlaying == false)   //since this gameObject has an audioSource in one of its children, this will override that childs
+            //if (audioSource.isPlaying == false)   //since this gameObject has an audioSource in one of its children, this will override that child
             //{
             //    int some = Random.Range(0, clipList.Count);
             //    audioSource.clip = clipList[some];
